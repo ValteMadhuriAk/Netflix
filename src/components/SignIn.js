@@ -1,14 +1,64 @@
-import React from "react";
+import React, { useRef } from "react";
 import Header from "./Header";
 import { useState } from "react";
+import { checkValidData } from "../utills/validate";
+import { auth } from "../utills/firebase";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [isSignInForm, setisSignInForm] = useState(true);
+  const [errorMessage,setErrorMeassage] = useState(null);
 
-  const handleSignUp = () => {
-    setisSignInForm(!isSignInForm); //toggle feature
-  };
-  return (
+  const navigate = useNavigate();
+
+  const email = useRef(null); //to check what data is there in input boxes
+  const password = useRef(null);//to check what data is there in input boxes
+    // const fullName = useRef(null);//to check what data is there in input boxes
+
+    //Validate Sign in form
+  const validateSignIn = ()=>{
+      const message = checkValidData(email.current.value,password.current.value);
+      setErrorMeassage(message);
+
+      if(message) return;
+      if(!isSignInForm){
+       createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+     .then((userCredential) => {
+       // Signed up 
+       const user = userCredential.user;
+       // ...
+     })
+     .catch((error) => {
+       const errorCode = error.code;
+       const errorMessage = error.message;
+       setErrorMeassage(errorCode+ "-" +errorMessage);
+       // ..
+     });
+     }
+
+     else{
+    signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+    .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    navigate("/browse");
+    
+    // ...
+    })
+    .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setErrorMeassage(errorCode+"-"+errorMessage);
+    });
+    }
+    };
+    
+    //Handle sign in
+    const handleSignUp = () => {
+      setisSignInForm(!isSignInForm); //toggle feature
+    };
+    return (
     <div>
       <Header />
       <div className="absolute w-full ">
@@ -17,34 +67,37 @@ const SignIn = () => {
           alt="background image"
         />
       </div>
-      <form className="absolute w-4/12 p-12 bg-black my-20 align-center mx-auto right-0 left-0 text-white bg-opacity-80">
+      <form onSubmit={(e)=>e.preventDefault()} className="absolute w-3/12 p-12 bg-black my-20 align-center mx-auto right-0 left-0 text-white bg-opacity-80">
         <h1 className="font-bold text-3xl py-4">
           {isSignInForm ? " Sign In" : "Sign Up"}
         </h1>
         {!isSignInForm && (
           <input
             text="text"
-            placeholder="Name"
+            placeholder="fullName"
             className="p-4 my-4 w-full bg-gray-700"
           ></input>
         )}
         <input
-          text="text"
+          type="text"
+          ref={email}
           placeholder="Email Address"
           className="p-4 my-4 w-full bg-gray-700"
         ></input>
         <input
-          text="Password"
+          type="password"
+          ref={password}
           placeholder="Password"
           className="p-4 my-4 w-full bg-gray-700"
         ></input>
-        <button className="p-6 my-4 bg-red-700 w-full rounded-lg">
+        <p className="text-lg font-bold-red text-red-700 py-4">{errorMessage}</p>
+        <button className="p-6 my-4 bg-red-700 w-full rounded-lg" onClick={validateSignIn}>
           {isSignInForm ? " Sign In" : "Sign Up"}
         </button>
         <p className="py-4 cursor-pointer" onClick={handleSignUp}>
           {isSignInForm
-            ? "Already registered, sign in now"
-            : "New to Netflix? Sign up now"}
+            ? "New to Netflix? Sign up now"
+            : "Already registered, sign in now"}
         </p>
       </form>
     </div>
