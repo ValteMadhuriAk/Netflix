@@ -42,8 +42,7 @@ const SignIn = () => {
     .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
-    navigate("/browse");
-    
+     
     // ...
     })
     .catch((error) => {
