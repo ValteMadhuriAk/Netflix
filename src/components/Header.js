@@ -38,12 +38,12 @@ useEffect(()=>{
 
 
   return (
-    <div className='absolute w-screen py-8 px-2 bg-gradient-to-b from-black z-10 flex justify-between'>
+    <div className='absolute w-screen py-2 px-2 bg-gradient-to-b from-black z-10 flex justify-between'>
         <img alt='logo' className='w-44 h-16' src={logo} />
         
-        <div className='flex p-2 py-2 px-4'>
+        <div className='flex py-2 px-4'>
         <img className="w-16 h-16 bg-no-repeat bg-right bg-contain float-right" src={profile_Image} alt='sign out button' />
-        {user && <button onClick={handleSIgnOut} className='text-red m-23 font-bold'>Sign Out</button>
+        {user && <button onClick={handleSIgnOut} className=' text-red-100 m-23 font-bold'>Sign Out</button>
         }</div>
     </div>     
   );
